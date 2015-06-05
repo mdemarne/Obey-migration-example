@@ -26,7 +26,7 @@ class Echo(times: Int) extends Actor {
 ```
 ...into:
 ```scala
-import scala.actors._
+import akka.actors._
 
 class Echo(times: Int) extends Actor {
   def receive {

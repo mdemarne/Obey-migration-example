@@ -35,7 +35,7 @@ import scala.language.reflectiveCalls
   /* Change import clause */
   val changeImport = (transform {
     case s: impl.Import if s.show[Code].contains("scala.actors") =>
-        q"import akka.actor.Actor".asInstanceOf[impl.Import] andCollect Message("Changing import clause.", s)
+        q"import akka.actor._".asInstanceOf[impl.Import] andCollect Message("Changing import clause.", s)
   }).topDown
 
   def apply = transformDef + changeImport
