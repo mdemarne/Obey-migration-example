@@ -4,7 +4,7 @@
 
 This is an example of migration rule that takes an actor from `scala.Actors` and transforms it into a `akka.actor.Actor`. Note that `scala.Actors` are deprecated.
 
-For this rule to work, please checkout the `withInferencer` version of Obey at: XXX.
+For this rule to work, please checkout the `withInferencer` version of Obey at: https://github.com/mdemarne/Obey/tree/withInferencer. This is due to work in progress, and should be solved soon!
 
 ## Example
 
