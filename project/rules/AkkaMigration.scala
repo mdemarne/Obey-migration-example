@@ -1,4 +1,4 @@
-import scala.meta.internal.{ast => impl}
+import scala.meta.internal.{ ast => impl }
 import scala.meta._
 import scala.meta.dialects.Scala211
 import scala.meta.tql._
@@ -20,22 +20,22 @@ import scala.language.reflectiveCalls
       })
   } andThen (transform {
     case t @ impl.Defn.Def(_, nm, _, _, _, body1) if nm.value == "act" =>
-      val changeReceive = (transform {
-        // Covering syntactic-only case
-        case impl.Term.Block(t @ impl.Term.While(impl.Lit.Bool(true), impl.Term.Block(List(impl.Term.Apply(impl.Term.Name("receive"), body2)))) :: Nil) =>
-          body2.head
-        // Covering semantic-only case
-        case t @ impl.Term.While(_, impl.Term.Apply(impl.Term.Name("receive"), body2)) =>
-          body2.head
-      }).topDown
-      val newBody = changeReceive(body1)
-      t.copy(name = impl.Term.Name("receive"), body = newBody.tree.get.asInstanceOf[impl.Term], decltpe = None) andCollect Message("Moving actor PartialFunction...", t)
+      val findPartialFunction = (collect {
+        case impl.Term.Apply(impl.Term.Name("receive"), (body2: impl.Term.PartialFunction) :: Nil) =>
+          body2
+      }).topDownBreak
+      val ret = findPartialFunction(body1).result.headOption match {
+        case Some(newBody) =>
+          t.copy(name = impl.Term.Name("receive"), body = newBody.asInstanceOf[impl.Term], decltpe = None) andCollect Message("Moving actor PartialFunction...", t)
+        case None => t andCollect Message("Did not find a receive partial function!", t)
+      }
+      ret
   }).topDownBreak).topDown
 
   /* Change import clause */
   val changeImport = (transform {
     case s: impl.Import if s.show[Code].contains("scala.actors") =>
-        q"import akka.actor._".asInstanceOf[impl.Import] andCollect Message("Changing import clause.", s)
+      q"import akka.actor._".asInstanceOf[impl.Import] andCollect Message("Changing import clause.", s)
   }).topDown
 
   def apply = transformDef + changeImport
