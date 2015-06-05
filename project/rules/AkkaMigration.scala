@@ -6,7 +6,7 @@ import scala.obey.model._
 import scala.language.reflectiveCalls
 
 @Tag("AkkaMigration") object AkkaMigration extends FixRule {
-  
+
   def description = "Moves deprecated Scala Actors into Akka Actors"
 
   def message(t: impl.Source): Message = Message(s"Migrating...", t)
@@ -21,6 +21,10 @@ import scala.language.reflectiveCalls
   } andThen (transform {
     case t @ impl.Defn.Def(_, nm, _, _, _, body1) if nm.value == "act" =>
       val changeReceive = (transform {
+        // Covering syntactic only case
+        case impl.Term.Block(t @ impl.Term.While(impl.Lit.Bool(true), impl.Term.Block(List(impl.Term.Apply(impl.Term.Name("receive"), body2)))) :: Nil) =>
+          body2.head
+        // Covering semantic only case
         case t @ impl.Term.While(_, impl.Term.Apply(impl.Term.Name("receive"), body2)) =>
           body2.head
       }).topDown
