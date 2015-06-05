@@ -3,7 +3,6 @@
 import scala.actors._
 
 class Echo(times: Int) extends Actor {
-
   def act {
     while (true) {
       receive {
@@ -13,12 +12,10 @@ class Echo(times: Int) extends Actor {
       }
     }
   }
-
   def repeatString(s: String) {
     /* Let's just print the string! */
     for (i <- 0 until times) println(s)
   }
-
   def repeatInt(i: Int) {
     /* Let's repeat the int, but say it's an int as well */
     for (i <- 0 until times) println(s"Int received: $i.")
