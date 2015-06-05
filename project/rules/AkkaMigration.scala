@@ -16,7 +16,7 @@ import scala.language.reflectiveCalls
     case impl.Defn.Class(_, _, _, _, impl.Template(_, parents, _, _)) =>
       parents.exists(p => p match {
         case pp: impl.Name => pp.value == "Actor"
-        case _ => true
+        case _ => false
       })
   } andThen (transform {
     case t @ impl.Defn.Def(_, nm, _, _, _, body1) if nm.value == "act" =>
