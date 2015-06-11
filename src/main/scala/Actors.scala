@@ -1,9 +1,12 @@
-/* Simple actor repeating what you send to it */
-
 import scala.actors._
 
+/** 
+ * Simple actor repeating what you send to it!
+ *  
+ * @param times Times the actor will repeat.
+ */
 class Echo(times: Int) extends Actor {
-  def act {
+  def act = {
     while (true) {
       receive {
         case s: String => repeatString(s)
@@ -12,11 +15,11 @@ class Echo(times: Int) extends Actor {
       }
     }
   }
-  def repeatString(s: String) {
+  def repeatString(s: String) = {
     /* Let's just print the string! */
     for (i <- 0 until times) println(s)
   }
-  def repeatInt(i: Int) {
+  def repeatInt(i: Int) = {
     /* Let's repeat the int, but say it's an int as well */
     for (i <- 0 until times) println(s"Int received: $i.")
   }
