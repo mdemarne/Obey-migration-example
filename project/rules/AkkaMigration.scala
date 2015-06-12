@@ -12,29 +12,6 @@ import scala.language.reflectiveCalls
 
   def message(t: scala.meta.Tree): Message = Message(s"Migrating...", t)
 
-  /* Changes act to receive */
-  /*val transformDef = (transform {
-      case cls @ Defn.Class(_, _, _, _, templ @ Template(_, List(actor), _, Some(stats)))
-      if actor.tpe == t"scala.actors.Actor" =>
-        val templ1 = templ.transform {
-          case act: Defn.Def if act.name.toString == "act" =>
-            val List(messages) = act.collect {
-              case Term.Apply(receive: Term.Ref, List(messages: Term.PartialFunction))
-              if receive.source == t"scala.actors.Actor".defs("receive").source =>
-                messages
-            }
-            act.copy(name = q"receive", body = messages)
-        }.asInstanceOf[Template]
-        cls.copy(templ = templ1) andCollect Message("Moving actor PartialFunction...", templ1)
-    }).topDown
-
-  /* Change import clause */
-  val changeImport = (transform {
-      case imp @ Import(List(clause @ Import.Clause(ref, List(Import.Selector.Wildcard()))))
-      if ref == q"scala.actors" =>
-        imp.copy(clauses = List(clause.copy(ref = q"akka.actors"))) andCollect Message("Changing import clause.", imp)
-    }).topDownBreak*/
-
   val transformDef = (transform {
       case cls @ Defn.Class(_, _, _, _, templ @ Template(_, parents, _, Some(stats)))
       if parents.exists(actor => actor.isInstanceOf[Ctor.Ref.Name] && actor.asInstanceOf[Ctor.Ref.Name].value == "Actor") =>
@@ -47,7 +24,7 @@ import scala.language.reflectiveCalls
             }
             act.copy(name = q"receive", body = messages)
         }.asInstanceOf[Template]
-        cls.copy(templ = templ1) andCollect Message("Moving actor PartialFunction...", templ1)
+        cls.copy(templ = templ1) andCollect Message("Moving actor PartialFunction...", templ)
     }).topDown
 
   /* Change import clause */

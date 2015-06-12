@@ -1,4 +1,4 @@
-import scala.actors._
+import akka.actor._
 
 /** 
  * Simple actor repeating what you send to it!
@@ -6,14 +6,10 @@ import scala.actors._
  * @param times Times the actor will repeat.
  */
 class Echo(times: Int) extends Actor {
-  def act = {
-    while (true) {
-      receive {
-        case s: String => repeatString(s)
-        case i: Int => repeatInt(i)
-        case x => println(s"Dunno what that is: $x.")
-      }
-    }
+  def receive = {
+    case s: String => repeatString(s)
+    case i: Int => repeatInt(i)
+    case x => println(s"Dunno what that is: $x.")
   }
   def repeatString(s: String) = {
     /* Let's just print the string! */
